@@ -1,1 +1,5 @@
+pynput==1.7.6
+python-xlib==0.33
 pyxhook==1.0.0
+schedule==1.2.1
+six==1.16.0
