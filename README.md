@@ -8,11 +8,11 @@ This is a simple python keylogger that demonstrates how a victims keystrokes can
 2. On startup:
    1. check if python is installed
    2. if so then install requirements
-   3. Then run main file
+   3. Then run main file as a background process
 3. Check if there is an internet connection.
 4. if so then:
-   1. then record keystrokes to a file for 30 minutes and then send that file via email
-   2. Name that file with random filename that increments. and has a timestamp.
+   1. Record keystrokes to a file for 30 minutes and then send that file via email
+   2. Name that file with current timestamp and save with a ".log" extension.
 5. If not then copy the key strokes to a text file
 6. if there is a pause for 30 seconds then skip next 2 lines
 7.  
@@ -30,7 +30,9 @@ This is a simple python keylogger that demonstrates how a victims keystrokes can
 1. How to send the keystrokes to an email?
 2. How to ensure that it is continuously running in the background?
 3. Save keystrokes to a file in current directory
-4. When it reaches the 25 minute cycle, another program takes the file and sends it to the email.
+4. How to make python perfrom a task after every 30 minutes
+   1. How to attach a file to the email, send it and delete log_file in current directory.
+5. How to set up keylogger.py to run at startup in linux
 
 ## How to run
 
@@ -39,4 +41,5 @@ This is a simple python keylogger that demonstrates how a victims keystrokes can
 [Keyboard Logger on pyinput](https://pypi.org/project/pynput/)
 
 [Send Emails using Python](https://realpython.com/python-send-email/)
-[pyxhook- library for linux](https://pypi.org/project/pyxhook/)
+
+[pyxhook- keystroke monitoring library for linux](https://pypi.org/project/pyxhook/)
