@@ -175,7 +175,6 @@ then push the word to the another long variable> log_sentence then empty word wi
 	- if not then add a string to the log file saying ("Victim has no active internet connection at {datetime.now()}) 
 
 BUGS FOUND
-1. The program seems not to be refreshing on the timestamp. It just gets taht initial timestamp and whenever it is called again it does not refresh
 2. How to send a *.log file via email using the smtplib module in python
 3. Check line 48 where log_file is declared: if your remove the path, if it affects where the file is created
 4. Look for ways to ignore the numpad keys if numpad key is off
